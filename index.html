@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+
+</head>
+<body>
+    
+    <canvas id="canvas" width="1280" height="750" ></canvas>
+
+<script>
+
+let canvas = document.getElementById('canvas');
+let ctx = canvas.getContext('2d');
+
+let x = 100;
+let y = 100;
+let speed = 10;
+let xSpeed = 0;
+let ySpeed = 0;
+let intervalId = null;
+
+let rectSize = 50;
+let rectX = 0;
+let rectY = 0;
+let rectGenerated = false;
+
+let blueRectangles = []; // Liste aller blauen Rechtecke
+let numBlueRectangles = 1;
+
+function generateRect() {
+  rectX = Math.floor(Math.random() * (canvas.width - rectSize));
+  rectY = Math.floor(Math.random() * (canvas.height - rectSize));
+  rectGenerated = true;
+}
+
+function checkCollision() {
+  if (
+    rectGenerated &&
+    x < rectX + rectSize &&
+    x + 100 > rectX &&
+    y < rectY + rectSize &&
+    y + 100 > rectY
+  ) {
+    // Kollision erkannt, das zufällige Rechteck neu positionieren
+    rectGenerated = false;
+    numBlueRectangles += 1;
+  }
+}
+function drawBlueRectangles() {
+  ctx.fillStyle = 'blue';
+  for (let i = 0; i < numBlueRectangles; i++) {
+    let xPos = x - (i * 60); 
+    ctx.fillRect(xPos, y, 60, 60);
+  }
+}
+
+
+function drawSecondRect() {
+  if (!rectGenerated) {
+    generateRect();
+  }
+  ctx.fillStyle = 'red';
+  ctx.fillRect(rectX, rectY, rectSize, rectSize);
+}
+
+function checkBounds() {
+  if (x < 0) {
+    x = canvas.width;
+  } else if (x > canvas.width) {
+    x = 0;
+  }
+
+  if (y < 0) {
+    y = canvas.height;
+  } else if (y > canvas.height) {
+    y = 0;
+  }
+}
+
+document.addEventListener('keydown', function(event){
+    if(event.key ==='ArrowLeft' && xSpeed !== speed){
+        xSpeed = -speed;
+        ySpeed = 0;
+    } else if (event.key ==='ArrowRight' && xSpeed !== -speed){
+        xSpeed = speed;
+        ySpeed = 0;
+    } else if (event.key ==='ArrowUp' && ySpeed !== speed){
+        ySpeed = -speed;
+        xSpeed = 0;
+    } else if (event.key ==='ArrowDown' && ySpeed !== -speed){
+        ySpeed = speed;
+        xSpeed = 0;
+    } else if (event.key === 'p') { // Wenn die Taste 'p' gedrückt wird, wird die Pause-Taste ausgelöst.
+        if (intervalId) {
+            clearInterval(intervalId); // Stoppen des Loops
+            intervalId = null;
+        } else {
+            intervalId = setInterval(draw, 30); // Fortsetzen des Loops
+        }
+    }
+})
+
+
+function move() {
+    x += xSpeed;
+    y += ySpeed;
+    checkBounds();
+    checkCollision()
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(x, y, 60, 60);
+    drawBlueRectangles()
+    drawSecondRect();
+    move();
+}
+
+intervalId = setInterval(draw, 30); // Starten des Loops
+
+
+</script>
+
+</body>
+</html>

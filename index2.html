@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Snake Easy</title>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="400"></canvas>
+
+    
+    
+    <style>
+        
+        #snakeboard {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+
+      </style>
+
+    <script>
+    
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const blockSize = 10;
+
+
+    let snake = [{x: 10, y: 10}, {x: 10, y: 20}, {x: 10, y: 30}];
+    let intervalId = null;
+    let direction = "down";
+
+
+function draw() {
+  // Clear the canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Move the snake in the current direction
+  let head = {x: snake[0].x, y: snake[0].y};
+  if (direction === "up") {
+    head.y -= blockSize;
+  } else if (direction === "down") {
+    head.y += blockSize;
+  } else if (direction === "left") {
+    head.x -= blockSize;
+  } else if (direction === "right") {
+    head.x += blockSize;
+  }
+  snake.unshift(head);
+  snake.pop();
+
+  // Draw the snake
+  ctx.fillStyle = "green";
+  snake.forEach(function(segment) {
+    ctx.fillRect(segment.x, segment.y, blockSize, blockSize);
+  });
+}
+
+document.addEventListener("keydown", function(event) {
+  // Change the direction of the snake based on the key pressed
+  if (event.key === "ArrowUp" && direction !== "down") {
+    direction = "up";
+  } else if (event.key === "ArrowDown" && direction !== "up") {
+    direction = "down";
+  } else if (event.key === "ArrowLeft" && direction !== "right") {
+    direction = "left";
+  } else if (event.key === "ArrowRight" && direction !== "left") {
+    direction = "right";
+  } else if (event.key === 'p') { // Wenn die Taste 'p' gedrückt wird, wird die Pause-Taste ausgelöst.
+        if (intervalId) {
+            clearInterval(intervalId); // Stoppen des Loops
+            intervalId = null;
+        } else {
+            intervalId = setInterval(draw, 100); // Fortsetzen des Loops
+        }
+    }
+});
+
+setInterval(draw, 100);
+
+    
+    </script>
+    
+</body>
+</html>
